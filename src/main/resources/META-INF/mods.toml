@@ -1,0 +1,36 @@
+
+modLoader="javafml"
+loaderVersion="[39,)"
+license="Public Domain"
+[[mods]]
+modId="circular"
+version="${file.jarVersion}"
+displayName="Circular"
+# A URL for the "homepage" for this mod, displayed in the mod UI
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="examplemod.png" #optional
+# A text field displayed in the mod UI
+credits="Thanks to PhoenixSC for showing me circular minecraft, I hate you" #optional
+# A text field displayed in the mod UI
+authors="agnor99" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+Heyo,
+I'm really sorry to everyone seeing this
+'''
+# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
+[[dependencies.circular]]
+    modId="forge"
+    mandatory=true
+    versionRange="[39,)"
+    ordering="NONE"
+    side="BOTH"
+# Here's another dependency
+[[dependencies.examplemod]]
+    modId="minecraft"
+    mandatory=true
+# This version range declares a minimum of the current minecraft version up to but not including the next major version
+    versionRange="[1.18.1,1.19)"
+    ordering="NONE"
+    side="BOTH"

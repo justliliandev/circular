@@ -1,0 +1,20 @@
+buildscript {
+    apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/buildscript.gradle', to: buildscript
+}
+
+apply from: 'https://noeppi-noeppi.github.io/ModUtils/v3/mod.gradle'
+
+repositories {
+    maven {
+        // location of the maven that hosts JEI files
+        name = "Progwml6 maven"
+        url = "https://dvs1.progwml6.com/files/maven/"
+    }
+    maven {
+        name = "MelanX"
+        url = "https://maven.melanx.de"
+    }
+}
+minecraft {
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+}
