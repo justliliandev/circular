@@ -22,8 +22,9 @@ import java.util.List;
 
 public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
 
-    private static final Vec2i SIZE = new Vec2i(279,279);
-    private static final Vec2i CENTER = new Vec2i(140,140);
+    private static final Vec2i SIZE = new Vec2i(326,289);
+    private static final Vec2i CENTER = new Vec2i(140,150);
+    private static final Vec2i CRAFTING_CENTER = new Vec2i(285,42);
     public static final ResourceLocation INVENTORY_LOCATION = new ResourceLocation("circular","textures/gui/inventory.png");
 
     public CircularScreen(InventoryMenu menu, Inventory inventory, Component component) {
@@ -48,7 +49,14 @@ public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
                     slot.y = (int)(-Math.cos(getAngleForSlot(relSlot, 9))*(70 + 18*row))-8 + CENTER.y();
                 }
             } else {
-                //Crafting
+                if (slot.index == 0) {
+                    slot.x = CRAFTING_CENTER.x() - 9;
+                    slot.y = CRAFTING_CENTER.y() - 9;
+                } else {
+                    int index = slot.index == 1 || slot.index == 2 ? slot.index-1 : slot.index == 3 ? 3 : 2;
+                    slot.x = (int)(Math.sin(getAngleForSlot(index, 4))*25)-9 + CRAFTING_CENTER.x();
+                    slot.y = (int)(-Math.cos(getAngleForSlot(index, 4))*25)-9 + CRAFTING_CENTER.y();
+                }
             }
         });
     }
