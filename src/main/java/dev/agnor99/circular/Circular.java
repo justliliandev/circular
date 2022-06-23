@@ -3,6 +3,7 @@ package dev.agnor99.circular;
 import net.minecraftforge.fml.IExtensionPoint;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.network.NetworkConstants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,5 +18,6 @@ public class Circular {
 
         ModLoadingContext.get().registerExtensionPoint(IExtensionPoint.DisplayTest.class,
                 () -> new IExtensionPoint.DisplayTest(() -> NetworkConstants.IGNORESERVERONLY, (a, b) -> true));
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, CircularConfig.CLIENT_SPEC, "circular.toml");
     }
 }

@@ -13,29 +13,51 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.Vec2;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
 
     private static final Vec2i SIZE = new Vec2i(326,289);
     private static final Vec2i CENTER = new Vec2i(140,150);
     private static final Vec2i CRAFTING_CENTER = new Vec2i(285,42);
-    public static final ResourceLocation INVENTORY_LOCATION = new ResourceLocation("circular","textures/gui/inventory.png");
+    public static final ResourceLocation INVENTORY_LOCATION = new ResourceLocation("circular","textures/gui/playerinv.png");
+    public static final ResourceLocation CRAFTING_LOCATION = new ResourceLocation("circular","textures/gui/crafting.png");
+    private final boolean isEasterEgg = Math.random() < CircularConfig.CHANCE_FOR_EASTER_EGG.get();
+    private final Inventory playerInv;
+    private long startTick = Minecraft.getInstance().level.getGameTime();
+    private double additionalAngle = 0;
 
     public CircularScreen(InventoryMenu menu, Inventory inventory, Component component) {
         super(menu, inventory, component);
+        playerInv = inventory;
+        moveSlots(0f);
+    }
+
+    private void moveSlots(float partialTicks) {
+        if (isEasterEgg) {
+            additionalAngle = Mth.lerp(
+                    partialTicks,
+                    (Minecraft.getInstance().level.getGameTime() - startTick)*1.5d,
+                    (Minecraft.getInstance().level.getGameTime() - startTick -1)*1.5d
+            ) % 360;
+            additionalAngle = Math.toRadians(additionalAngle);
+        }
+
+        double finalAdditionalAngle = additionalAngle;
         menu.slots.forEach(slot -> {
-            if (slot.container == inventory) {
+            if (slot.container == playerInv) {
                 if (List.of(5,6,7,8,45).contains(slot.index)) {
                     //ArmorSlots+Shield(45)
                     int relSlot = slot.index == 45 ? 4 : slot.index - 5;
-                    slot.x = (int)(Math.sin(getAngleForSlot(relSlot, 5))*50)-8 + CENTER.x();
-                    slot.y = (int)(-Math.cos(getAngleForSlot(relSlot, 5))*50)-8 + CENTER.y();
+                    slot.x = (int)(Math.sin(getAngleForSlot(relSlot, 5) + finalAdditionalAngle)*50) -8 + CENTER.x();
+                    slot.y = (int)(-Math.cos(getAngleForSlot(relSlot, 5) + finalAdditionalAngle)*50) - 8 + CENTER.y();
                 } else {
                     //Inventory
                     int relSlot = slot.index%9;
@@ -45,8 +67,8 @@ public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
                     } else {
                         row = slot.index/9;
                     }
-                    slot.x = (int)(Math.sin(getAngleForSlot(relSlot, 9))*(70 + 18*row))-8 + CENTER.x();
-                    slot.y = (int)(-Math.cos(getAngleForSlot(relSlot, 9))*(70 + 18*row))-8 + CENTER.y();
+                    slot.x = (int)(Math.sin(getAngleForSlot(relSlot, 9) + finalAdditionalAngle)*(70 + 18*row))-8 + CENTER.x();
+                    slot.y = (int)(-Math.cos(getAngleForSlot(relSlot, 9) + finalAdditionalAngle)*(70 + 18*row))-8 + CENTER.y();
                 }
             } else {
                 if (slot.index == 0) {
@@ -67,6 +89,8 @@ public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
 
     @Override
     public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+        if (isEasterEgg)
+            moveSlots(partialTick);
         this.renderBackground(poseStack);
         super.render(poseStack, mouseX, mouseY, partialTick);
         this.renderTooltip(poseStack, mouseX, mouseY);
@@ -92,7 +116,16 @@ public class CircularScreen extends AbstractContainerScreen<InventoryMenu> {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, INVENTORY_LOCATION);
-        this.blit(poseStack, leftPos, topPos, 0, 0, this.imageWidth, this.imageHeight, this.imageWidth, this.imageHeight);
+        int inv_size = 279;
+        int crafting_size = 84;
+        poseStack.pushPose();
+        poseStack.translate(leftPos + CENTER.x(), topPos + CENTER.y(), 0);
+        poseStack.mulPose(Quaternion.fromXYZ(0,0,(float) additionalAngle));
+        poseStack.translate(-leftPos - CENTER.x(), -topPos - CENTER.y(), 0);
+        blit(poseStack, leftPos, topPos+10, 0, 0, inv_size, inv_size, inv_size, inv_size);
+        poseStack.popPose();
+        RenderSystem.setShaderTexture(0, CRAFTING_LOCATION);
+        blit(poseStack, leftPos + 242, topPos, 0, 0, crafting_size, crafting_size, crafting_size, crafting_size);
         Vec2 normalMouseVec = new Vec2i(mouseX - CENTER.x() - leftPos, mouseY - CENTER.y() - topPos).toFloat().normalized();
         renderEntityInInventory(leftPos + CENTER.x(), topPos+CENTER.y(), 30, findClosestAngle(normalMouseVec), this.minecraft.player);
     }
