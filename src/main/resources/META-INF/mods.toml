@@ -1,6 +1,6 @@
 
 modLoader="javafml"
-loaderVersion="[39,)"
+loaderVersion="[41,)"
 license="Public Domain"
 [[mods]]
 modId="circular"
@@ -23,7 +23,7 @@ I'm really sorry to everyone seeing this
 [[dependencies.circular]]
     modId="forge"
     mandatory=true
-    versionRange="[39,)"
+    versionRange="[41,)"
     ordering="NONE"
     side="BOTH"
 # Here's another dependency
@@ -31,6 +31,6 @@ I'm really sorry to everyone seeing this
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.18.1,1.19)"
+    versionRange="[1.19,1.20)"
     ordering="NONE"
     side="BOTH"
