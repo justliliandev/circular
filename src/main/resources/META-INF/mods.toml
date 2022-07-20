@@ -23,11 +23,11 @@ I'm really sorry to everyone seeing this
 [[dependencies.circular]]
     modId="forge"
     mandatory=true
-    versionRange="[41,)"
+    versionRange="[41.0.100,)"
     ordering="NONE"
     side="BOTH"
 # Here's another dependency
-[[dependencies.examplemod]]
+[[dependencies.circular]]
     modId="minecraft"
     mandatory=true
 # This version range declares a minimum of the current minecraft version up to but not including the next major version
